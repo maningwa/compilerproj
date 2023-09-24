@@ -1,26 +1,17 @@
-int add (int a, int b){
-	int res = a + b;
-	return res;
-}
-
-int sub(int a, int b){
-	int pos = a-b;
-	return pos;
-}
-
-int div(int a, int b){
-	int divisor = a / b;
-	return divisor;
-}
-
-void dothis(int random){
-	random = 234566;
+int stress = 12;
+void putc(char letter){
+	buffer = letter;
+	cursor = cursor + 1;
 	return 0;
 }
 
-void main(int args,char vals){
-	args = 1 + 2 - add(1,2);
-	int test = 1==2;
-	int x = 245 + add(1,2,3,4,5,6);
+void main(int arg, int b){	
+	
+	while(i<=0);
+	int pos = arg + 1;
+	putc(pos);
+	endwhile;
+	return 0;
 }
+
 
