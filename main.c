@@ -22,10 +22,8 @@ int main(int args, char** argvs){
 		fread(src,2048,1,file);
 	};
 	int nodespace = Tokenizer(src);
-
-
-//	for(int i = 0; i<tkncnt;i++){
-//		printf("%d::: %s \t--> %s\n",tokens[i].id,NODES[tokens[i].type],tokens[i].string);
+//	for(int i = 0; i < nodespace;i++){
+//		printf("%d:\t%s\t----> %s\n",tokens[i].id,NODES[tokens[i].type],tokens[i].string);
 //	}
 
 	Node root = parse();
@@ -41,11 +39,9 @@ int main(int args, char** argvs){
 			traverse(&tokens[i],&posind);
 		}else if(tokens[i].type == FUNC_DEC){
 		  	traverse(&tokens[i],&posind);
-		}else if(tokens[i].type >=WHILE && tokens[i].type<=ENDWHILE){
-		
-			traverse(&tokens[i],&posind);
+		}else{
+		//	printf("Default token %s\n",tokens[i].string);
 		}
-
 	};
 //	printf("------\n%s",src);
 

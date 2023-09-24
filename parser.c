@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 
-int delaytime = 100;
+int delaytime = 1000;
 Node parse(){
 	ParseEngineState state = BEG;
 	Node root = {.string = {'R','o','o','t','\0'}}; 	//the static node of the compiler state
@@ -13,7 +13,7 @@ Node parse(){
 	Node *lasthold;
 	int i = 0;		//Node index initialized at 0;
 	while(i<tkncnt){
-		//printf("\t\tCurrent %s\n",current->string);
+	//	printf("\t\tCurrent %s\n",current->string);
 		switch(state){
 			case BEG:
 				if(tokens[i].type == RIGHT_BRACES){
@@ -30,17 +30,15 @@ Node parse(){
 					}
 				}else if(tokens[i].type == RETURN){
 					state = EXP;
-				}else if(tokens[i].type >= WHILE && tokens[i].type <=ENDWHILE){
-					state = COND;
 				}else{
 					i++;
-			//		printf("Defaulting at start\n");
+				//	printf("Defaulting at start\n");
 				}
 				usleep(delaytime);			
 				break;
 
 			case DEC:
-			//	printf("Dec %s\n",tokens[i].string);
+	//			printf("Dec %s\n",tokens[i].string);
 				//always assigning parent to current node under declaration
 				tokens[i].parent = current;
 				if(tokens[i+1].type == LEFT_PAREN){
@@ -64,7 +62,7 @@ Node parse(){
 				break;
 
 			case PARAM:
-			//	printf("param %s\n",tokens[i].string);
+	//			printf("param %s\n",tokens[i].string);
 				if (tokens[i+1].type == COMMA){
 					tokens[i].left_child = &tokens[i+3];
 					i+=3;
@@ -82,14 +80,14 @@ Node parse(){
 				break;
 
 			case SCOPING:
-			//	printf("scoping In\n");
+	//			printf("scoping In\n");
 				current = lasthold;
 				state = BEG;
 				usleep(delaytime);
 				break;
 
 			case EXIT_SCOPE:
-			//	printf("Scoping Out\n");
+	//			printf("Scoping Out\n");
 				current = current->parent;
 				usleep(delaytime);
 				state = BEG;
@@ -97,7 +95,7 @@ Node parse(){
 
 			case ACC:
 				tokens[i].codeObj = true;
-			//	printf("varacc %s\n",tokens[i].string);
+	//			printf("varacc %s\n",tokens[i].string);
 				if(tokens[i+1].type == SEMI_COLON){
 					i+=1;
 					state = BEG;
@@ -105,7 +103,7 @@ Node parse(){
 					tokens[i].type = FUNC_CALL;
 					i+=2;
 					state = ARGS;
-				}else if(tokens[i+1].type >= ADD && tokens[i+1].type <= LOGIC_NOT_EQUAL){
+				}else if(tokens[i+1].type >= ADD && tokens[i+1].type <= LOGIC_EQUAL){
 					i+=1;
 					state = EXP;
 				}
@@ -114,17 +112,15 @@ Node parse(){
 
 			case EXP:
 				tokens[i].codeObj = true;
-			//	printf("%s<--\t{%s}\t-->%s\n",tokens[i-1].string,tokens[i].string,tokens[i+2].string);
+//				printf("%s<--\t{%s}\t-->%s\n",tokens[i-1].string,tokens[i].string,tokens[i+2].string);
 				if(tokens[i+2].type == LEFT_PAREN){
-					tokens[i+1].type = FUNC_CALL;
-					tokens[i].right_child = &tokens[i+1];
-					tokens[i].left_child = &tokens[i-1];
+					tokens[i].left_child = &tokens[i+1];
 					i+=3;
 					state = ARGS;
 					break;
-				}else if(tokens[i+2].type == SEMI_COLON || tokens[i+2].type == RIGHT_PAREN){
-					if(tokens[i].type == RETURN || tokens[i].type == RIGHT_PAREN){
-			//			printf(" %s\t%s\n",tokens[i].string,tokens[i+1].string);
+				}else if(tokens[i+2].type == SEMI_COLON){
+					if(tokens[i].type == RETURN){
+	//					printf(" %s\t%s\n",tokens[i].string,tokens[i+1].string);
 						tokens[i].left_child = &tokens[i+1];
 						i+=2;
 						state = BEG;
@@ -135,7 +131,6 @@ Node parse(){
 						state = BEG;
 					}
 				}else{
-			//		printf("%s->(%s)\n",tokens[i].string,NODES[tokens[i].type]);
 					tokens[i].left_child = &tokens[i-1];
 					tokens[i].right_child = &tokens[i+2];			
 					i+=2;
@@ -150,36 +145,16 @@ Node parse(){
 				tokens[i-2].left_child = &tokens[i];
 				while(tokens[i+1].type == COMMA){
 					tokens[i].type = FUNC_ARG;
-			//		printf("%s\n",tokens[i].string);
+	//				printf("%s\n",tokens[i].string);
 					tokens[i].left_child = &tokens[i+2];
 					i+=2;
 				}
 				tokens[i].type = FUNC_ARG;
-			//	printf("%s\n",tokens[i].string);
+	//			printf("%s\n",tokens[i].string);
 				i+=2;
 				state = BEG;
 				usleep(delaytime);
 				break;
-
-			case COND:
-				tokens[i].codeObj = true;
-				if(tokens[i+3].type >=ADD && tokens[i+3].type <= LOGIC_NOT_EQUAL){
-					tokens[i].left_child = &tokens[i+3];
-					i+=3;
-					state = EXP;
-				}else if(tokens[i+1].type == SEMI_COLON){
-					i+=2;
-					state = BEG;
-				}
-				else{
-				//	tokens[i].left_child = &tokens[i+2];
-				//	i+=4;
-				//	state = BEG;
-//					printf("Defaulting at condition %s\n",tokens[i+3].string);
-					i++;
-				}
-				break;
-
 		}
 	}
 }
